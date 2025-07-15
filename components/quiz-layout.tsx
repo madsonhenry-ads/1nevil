@@ -9,17 +9,19 @@ interface QuizLayoutProps {
 
 export function QuizLayout({ children, step, totalSteps = 40 }: QuizLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#f5f3f0]">
+    <div className="min-h-screen w-full bg-[#f5f3f0] flex flex-col">
       <Header />
 
-      <div className="w-full bg-gray-200 h-1">
+      <div className="w-full bg-gray-200 h-1 flex-shrink-0">
         <div
           className="bg-green-600 h-1 transition-all duration-300"
           style={{ width: `${(step / totalSteps) * 100}%` }}
         />
       </div>
 
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-4xl mx-auto">{children}</main>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-8 w-full max-w-none">
+        {children}
+      </main>
     </div>
   )
 }
