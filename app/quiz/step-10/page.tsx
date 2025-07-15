@@ -1,20 +1,22 @@
 "use client"
 
+import type React from "react"
+
 import { useState, Suspense } from "react"
 import { ArrowLeft, ThumbsDown, ThumbsUp, HelpCircle, XCircle, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 
-// Assumindo que QuizLayout é um componente que você já tem
-// import { QuizLayout } from "@/components/quiz-layout"; 
-
 // Mock do QuizLayout para o exemplo funcionar de forma independente
-const QuizLayout = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+const QuizLayout = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen w-full bg-[#f5f3f0] flex flex-col">{children}</div>
+)
 
 function Step10Content() {
   const [selectedOption, setSelectedOption] = useState<string>("")
   const router = useRouter()
   const searchParams = useSearchParams()
+
   // Pega os parâmetros da URL
   const gender = searchParams.get("gender") || "male"
   const age = searchParams.get("age") || ""
@@ -31,7 +33,7 @@ function Step10Content() {
       router.push(
         `/quiz/step-11?gender=${gender}&age=${age}&tiredness=${tiredness}&lastMinute=${lastMinute}&distraction=${distraction}&worried=${worried}&moodSwings=${moodSwings}&harmony=${harmony}&emotions=${option}`,
       )
-    }, 300) // Diminuí o tempo para uma transição mais rápida
+    }, 300)
   }
 
   const options = [
@@ -42,66 +44,89 @@ function Step10Content() {
     { value: "strongly-agree", icon: ThumbsUp, label: "Strongly agree", iconModifier: Sparkles },
   ]
 
+  // Cálculo da porcentagem de progresso (step 10 de 26)
+  const progressPercentage = (7 / 26) * 100
+
   return (
     <QuizLayout>
-      <header className="w-full px-6 py-4 flex justify-between items-center absolute top-0 left-0 right-0 bg-[#f5f3f0] z-10">
+      {/* Header */}
+      <header className="w-full px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center bg-[#f5f3f0] flex-shrink-0">
         <Link
           href={`/quiz/step-9?gender=${gender}&age=${age}&tiredness=${tiredness}&lastMinute=${lastMinute}&distraction=${distraction}&worried=${worried}&moodSwings=${moodSwings}&harmony=${harmony}`}
-          className="p-2"
+          className="p-2 hover:bg-white/50 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-6 h-6 text-black" />
+          <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-black flex-shrink-0" />
         </Link>
-        <div className="flex items-center gap-2">
-          {/* Ícone central pode ser adicionado aqui se necessário */}
-        </div>
-        <span className="text-gray-600 text-sm font-medium">7/26</span>
+
+        <div className="flex items-center gap-2">{/* Logo ou ícone central pode ser adicionado aqui */}</div>
+
+        <span className="text-gray-600 text-xs sm:text-sm font-medium">7/26</span>
       </header>
-      
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto min-h-screen">
-        <div className="text-center space-y-2 mb-12">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">It's difficult for me to express emotions</h1>
-          <p className="text-gray-600 text-base">Do you agree with the following statement?</p>
+
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-200 h-1.5 flex-shrink-0">
+        <div
+          className="bg-teal-500 h-full transition-all duration-300 ease-out"
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+        <div className="w-full max-w-2xl mx-auto text-center space-y-4 mb-8 sm:mb-12">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 leading-tight px-2">
+            It's difficult for me to express emotions
+          </h1>
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg px-2">
+            Do you agree with the following statement?
+          </p>
         </div>
 
-        {/* --- CORREÇÃO APLICADA AQUI --- */}
-        <div className="w-full max-w-lg flex justify-between items-start mt-8">
-          {options.map((option) => {
-            const Icon = option.icon
-            const IconModifier = option.iconModifier
-            const isSelected = selectedOption === option.value
-            
-            return (
-              // 1. Novo container para agrupar o botão e o rótulo
-              <div key={option.value} className="flex flex-col items-center gap-2 w-20 text-center">
-                <button
-                  onClick={() => handleOptionSelect(option.value)}
-                  className={`flex items-center justify-center p-3 rounded-lg border-2 transition-all duration-200 w-20 h-20 relative ${
-                    isSelected
-                      ? "border-teal-500 bg-teal-50"
-                      : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                  }`}
+        {/* Rating Scale */}
+        <div className="w-full max-w-lg mx-auto">
+          <div className="flex justify-between items-start gap-2 sm:gap-4">
+            {options.map((option) => {
+              const Icon = option.icon
+              const IconModifier = option.iconModifier
+              const isSelected = selectedOption === option.value
+
+              return (
+                <div
+                  key={option.value}
+                  className="flex flex-col items-center gap-2 flex-1 max-w-[70px] sm:max-w-[80px] text-center"
                 >
-                  <Icon
-                    className={`w-8 h-8 ${isSelected ? "text-teal-500" : "text-gray-400"}`}
-                  />
-                  {IconModifier && (
-                    <IconModifier
-                      className={`absolute ${
-                        option.value === "strongly-disagree" ? "top-1 left-1" : "bottom-1 right-1"
-                      } w-4 h-4 ${isSelected ? "text-teal-500" : "text-gray-400"}`}
+                  <button
+                    onClick={() => handleOptionSelect(option.value)}
+                    className={`flex items-center justify-center rounded-xl border-2 transition-all duration-200 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 relative ${
+                      isSelected
+                        ? "border-teal-500 bg-teal-50 scale-105 shadow-lg"
+                        : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:shadow-sm"
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 flex-shrink-0 ${
+                        isSelected ? "text-teal-500" : "text-gray-400"
+                      }`}
                     />
+                    {IconModifier && (
+                      <IconModifier
+                        className={`absolute ${
+                          option.value === "strongly-disagree" ? "top-1 left-1" : "bottom-1 right-1"
+                        } w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 ${isSelected ? "text-teal-500" : "text-gray-400"}`}
+                      />
+                    )}
+                  </button>
+
+                  {/* Label */}
+                  {option.label && (
+                    <span className="text-xs sm:text-sm font-medium text-gray-600 min-h-[32px] sm:min-h-[36px] flex items-center leading-tight">
+                      {option.label}
+                    </span>
                   )}
-                </button>
-                
-                {/* 2. O rótulo agora fica FORA do botão, mas dentro do container do grupo */}
-                {option.label && (
-                  <span className="text-xs font-medium text-gray-600 h-8 flex items-center">
-                    {option.label}
-                  </span>
-                )}
-              </div>
-            )
-          })}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </main>
     </QuizLayout>
@@ -110,7 +135,16 @@ function Step10Content() {
 
 export default function Step10() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen w-full bg-[#f5f3f0] flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto"></div>
+            <p className="mt-2 text-gray-600">Loading...</p>
+          </div>
+        </div>
+      }
+    >
       <Step10Content />
     </Suspense>
   )

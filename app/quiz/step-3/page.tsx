@@ -16,57 +16,61 @@ function Step3Content() {
     router.push(`/quiz/step-4?gender=${gender}&age=${age}`)
   }
 
+  // Escolhe a imagem de perfil com base no gênero
   const centralProfileImage = gender === "female" ? "/images/female1.avif" : "/images/male2.avif"
 
   return (
-    <div className="min-h-screen w-full bg-[#f5f3f0] flex flex-col">
-      <header className="w-full px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+    <div className="min-h-screen bg-[#f5f3f0]">
+      {/* Cabeçalho customizado para as páginas do quiz */}
+      <header className="w-full px-6 py-4 flex justify-between items-center">
         <Link href={`/quiz/step-2?gender=${gender}`} className="p-2">
-          <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
+          <ArrowLeft className="w-6 h-6 text-black" />
         </Link>
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-black rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full relative">
+          <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+            <div className="w-5 h-5 bg-white rounded-full relative">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-2 h-2 sm:w-3 sm:h-3 bg-black rounded-full"></div>
+                <div className="w-3 h-3 bg-black rounded-full"></div>
               </div>
             </div>
           </div>
         </div>
-        <div className="w-10"></div>
+        <div className="w-10"></div> {/* Espaçador para centralizar */}
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-8 w-full">
-        <div className="text-center space-y-2 sm:space-y-4 mb-8 sm:mb-12 md:mb-16 w-full max-w-4xl">
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-teal-600 px-2">
-            Over 1,000,000 people
-          </h1>
-          <p className="text-gray-800 text-base sm:text-lg md:text-xl px-2">have chosen Liven</p>
+      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-4xl mx-auto min-h-[calc(100vh-120px)]">
+        <div className="text-center space-y-2 mb-16">
+          <h1 className="text-2xl md:text-3xl font-bold text-teal-600">Over 1,000,000 people</h1>
+          <p className="text-gray-800 text-lg">have chosen Liven</p>
         </div>
 
-        <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-white shadow-lg mb-8 sm:mb-12 md:mb-16 flex-shrink-0">
+        {/* 
+        IMAGEM CENTRAL - AGORA SIMPLIFICADA E MAIOR 
+        Removemos o container 'relative' e todos os elementos ao redor.
+        A imagem agora é um elemento direto do flex container 'main'.
+      */}
+        <div className="w-80 h-80 rounded-full overflow-hidden border-4 border-white shadow-lg mb-16">
           <Image
             src={centralProfileImage || "/placeholder.svg"}
             alt={`${gender} profile`}
-            width={320}
-            height={320}
+            width={320} // Corresponde ao w-80 (320px)
+            height={320} // Corresponde ao h-80 (320px)
             className="w-full h-full object-cover"
           />
         </div>
 
-        <div className="w-full max-w-sm px-2">
-          <button
-            onClick={handleContinue}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 sm:py-4 px-6 sm:px-8 rounded-full text-base sm:text-lg transition-colors"
-          >
-            Continue
-          </button>
-        </div>
+        <button
+          onClick={handleContinue}
+          className="w-full max-w-sm bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-8 rounded-full text-lg transition-colors"
+        >
+          Continue
+        </button>
       </main>
     </div>
   )
 }
 
+// O componente exportado permanece o mesmo
 export default function Step3() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
