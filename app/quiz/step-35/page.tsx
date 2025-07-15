@@ -2,234 +2,259 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import Image from "next/image"
-import { Check, Star } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 
-interface LoadingStep {
-  id: string
-  label: string
-  completed: boolean
-  progress: number
-  isActive: boolean
-}
+// Componente de Pop-up
+const PopupModal = ({ isOpen, question, onAnswer, onClose }) => {
+  if (!isOpen) return null
 
-interface Testimonial {
-  id: number
-  title: string
-  author: string
-  text: string
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop com blur */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Modal */}
+      <div className="relative bg-white rounded-2xl p-8 max-w-md mx-4 shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="text-center">
+          <p className="text-sm text-gray-600 mb-4">To move forward, specify</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-8 leading-tight">{question}</h3>
+
+          <div className="flex gap-4 justify-center">
+            <Button
+              onClick={() => onAnswer("no")}
+              variant="outline"
+              className="px-8 py-3 rounded-full bg-gray-100 hover:bg-gray-200 border-0 text-gray-700 font-medium min-w-[100px]"
+            >
+              No
+            </Button>
+            <Button
+              onClick={() => onAnswer("yes")}
+              variant="outline"
+              className="px-8 py-3 rounded-full bg-gray-100 hover:bg-gray-200 border-0 text-gray-700 font-medium min-w-[100px]"
+            >
+              Yes
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Step35() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
-  const [allCompleted, setAllCompleted] = useState(false)
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
-  const [steps, setSteps] = useState<LoadingStep[]>([
-    { id: "goals", label: "Goals", completed: false, progress: 0, isActive: true },
-    { id: "growth", label: "Growth areas", completed: false, progress: 0, isActive: false },
-    { id: "content", label: "Content", completed: false, progress: 0, isActive: false },
-  ])
+  // Estados para as barras de progresso
+  const [goalsProgress, setGoalsProgress] = useState(0)
+  const [growthProgress, setGrowthProgress] = useState(0)
+  const [contentProgress, setContentProgress] = useState(0)
+  const [currentStep, setCurrentStep] = useState(0) // 0: goals, 1: growth, 2: content
 
-  const testimonials: Testimonial[] = [
-    {
-      id: 1,
-      title: "It has really changed my life",
-      author: "Brian Ross",
-      text: "I have been using this app for six months now. During this time, I have been able to get rid of the habit of putting everything off until the last minute. The app has helped me to organise my time better and start achieving my goals. It has really changed my life for the better.",
-    },
-    {
-      id: 2,
-      title: "Liven is a great self-help tool...",
-      author: "Dylan Beker",
-      text: "Liven helps me understand why I procrastinate on tasks and how to get rid of it. Liven is doing a great job at this. I am very grateful for a tool like Liven.",
-    },
-    {
-      id: 3,
-      title: "Eye-opening information...",
-      author: "Patrick Naughton",
-      text: "I am new to this app. I am not new to my own problems. As I get older and am now 62, years needing help. So little money for eye-opening information in relation to my inner self and motivation.",
-    },
-  ]
+  // Estados para os pop-ups
+  const [showPopup, setShowPopup] = useState(false)
+  const [currentQuestion, setCurrentQuestion] = useState("")
+  const [popupAnswered, setPopupAnswered] = useState({
+    goals: false,
+    growth: false,
+    content: false,
+  })
 
+  // Perguntas dos pop-ups
+  const questions = {
+    goals: "Are you inclined to finish what you start?",
+    growth: "Are you familiar with journaling for self-reflection?",
+    content: "Do you want to learn how to build strong habits?",
+  }
+
+  // Carregar estado dos pop-ups do sessionStorage
   useEffect(() => {
-    // Testimonial rotation every 6 seconds
-    const testimonialInterval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
-    }, 6000)
-
-    // Sequential step loading
-    const loadStep = (stepIndex: number) => {
-      if (stepIndex >= steps.length) {
-        setAllCompleted(true)
-        return
-      }
-
-      // Activate current step
-      setSteps((prevSteps) =>
-        prevSteps.map((step, index) => ({
-          ...step,
-          isActive: index === stepIndex,
-        })),
-      )
-
-      // Progress animation for 12 seconds
-      const progressInterval = setInterval(() => {
-        setSteps((prevSteps) => {
-          const newSteps = [...prevSteps]
-          if (newSteps[stepIndex].progress < 100) {
-            newSteps[stepIndex].progress = Math.min(newSteps[stepIndex].progress + 1, 100)
-          }
-          return newSteps
-        })
-      }, 120) // 12000ms / 100 = 120ms per 1%
-
-      // Complete step after 12 seconds and move to next
-      setTimeout(() => {
-        setSteps((prevSteps) => {
-          const newSteps = [...prevSteps]
-          newSteps[stepIndex].completed = true
-          newSteps[stepIndex].progress = 100
-          newSteps[stepIndex].isActive = false
-          return newSteps
-        })
-
-        clearInterval(progressInterval)
-        setCurrentStepIndex(stepIndex + 1)
-
-        // Load next step after a brief pause
-        setTimeout(() => {
-          loadStep(stepIndex + 1)
-        }, 500)
-      }, 12000)
-    }
-
-    // Start loading first step after 1 second
-    const initialTimeout = setTimeout(() => {
-      loadStep(0)
-    }, 1000)
-
-    return () => {
-      clearInterval(testimonialInterval)
-      clearTimeout(initialTimeout)
+    const savedState = sessionStorage.getItem("popupAnswered")
+    if (savedState) {
+      setPopupAnswered(JSON.parse(savedState))
     }
   }, [])
 
-  const handleContinue = () => {
-    const params = new URLSearchParams(searchParams.toString())
-    router.push(`/quiz/step-36?${params.toString()}`)
+  // Salvar estado dos pop-ups no sessionStorage
+  const savePopupState = (newState) => {
+    setPopupAnswered(newState)
+    sessionStorage.setItem("popupAnswered", JSON.stringify(newState))
   }
 
+  // Função para mostrar pop-up
+  const showPopupForStep = (step) => {
+    const stepNames = ["goals", "growth", "content"]
+    const stepName = stepNames[step]
+
+    if (!popupAnswered[stepName]) {
+      setCurrentQuestion(questions[stepName])
+      setShowPopup(true)
+      console.log(`Showing popup for ${stepName}: ${questions[stepName]}`)
+    }
+  }
+
+  // Função para lidar com resposta do pop-up
+  const handlePopupAnswer = (answer) => {
+    const stepNames = ["goals", "growth", "content"]
+    const stepName = stepNames[currentStep]
+
+    console.log(`User answered "${answer}" for ${stepName}`)
+
+    const newState = {
+      ...popupAnswered,
+      [stepName]: true,
+    }
+    savePopupState(newState)
+    setShowPopup(false)
+  }
+
+  // Efeito para controlar o progresso das barras
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (currentStep === 0) {
+        // Carregando Goals
+        setGoalsProgress((prev) => {
+          const newProgress = Math.min(prev + 2, 100)
+
+          // Mostrar pop-up aos 50%
+          if (newProgress === 50) {
+            showPopupForStep(0)
+          }
+
+          // Quando Goals chegar a 100%, começar Growth
+          if (newProgress === 100) {
+            setTimeout(() => setCurrentStep(1), 500)
+          }
+
+          return newProgress
+        })
+      } else if (currentStep === 1) {
+        // Carregando Growth areas
+        setGrowthProgress((prev) => {
+          const newProgress = Math.min(prev + 2, 100)
+
+          // Mostrar pop-up aos 50%
+          if (newProgress === 50) {
+            showPopupForStep(1)
+          }
+
+          // Quando Growth chegar a 100%, começar Content
+          if (newProgress === 100) {
+            setTimeout(() => setCurrentStep(2), 500)
+          }
+
+          return newProgress
+        })
+      } else if (currentStep === 2) {
+        // Carregando Content
+        setContentProgress((prev) => {
+          const newProgress = Math.min(prev + 2, 100)
+
+          // Mostrar pop-up aos 50%
+          if (newProgress === 50) {
+            showPopupForStep(2)
+          }
+
+          // Quando Content chegar a 100%, redirecionar
+          if (newProgress === 100) {
+            setTimeout(() => {
+              const params = new URLSearchParams(searchParams.toString())
+              router.push(`/quiz/step-36?${params.toString()}`)
+            }, 1000)
+          }
+
+          return newProgress
+        })
+      }
+    }, 50) // Atualiza a cada 50ms para suavidade
+
+    return () => clearInterval(interval)
+  }, [currentStep, router, searchParams, popupAnswered])
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      {/* Logo */}
-      <div className="mb-8">
-        <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
-          <Image src="/placeholder-logo.svg" alt="Logo" width={24} height={24} className="text-white" />
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl bg-white/80 backdrop-blur-sm shadow-xl border-0">
+        <CardContent className="p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Creating your personalized plan</h1>
+            <p className="text-gray-600">
+              We're analyzing your responses to build the perfect wellness journey for you
+            </p>
+          </div>
 
-      {/* Title */}
-      <div className="text-center mb-12">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-2">Creating your</h1>
-        <h2 className="text-2xl md:text-3xl font-semibold text-green-600">personalized Well-being</h2>
-        <h2 className="text-2xl md:text-3xl font-semibold text-green-600">Management plan</h2>
-      </div>
-
-      {/* Loading Steps */}
-      <div className="w-full max-w-md space-y-8 mb-12">
-        {steps.map((step, index) => (
-          <div key={step.id} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span
-                className={`font-medium text-lg transition-colors duration-300 ${
-                  step.isActive ? "text-green-600" : step.completed ? "text-gray-700" : "text-gray-400"
-                }`}
-              >
-                {step.label}
-              </span>
-              <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-500 ${
-                  step.completed ? "bg-green-500 scale-110" : step.isActive ? "bg-green-200" : "bg-gray-200"
-                }`}
-              >
-                {step.completed && <Check className="w-4 h-4 text-white animate-in zoom-in duration-300" />}
+          <div className="space-y-8">
+            {/* Goals Progress */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-700">Goals</span>
+                <span className="text-sm text-gray-500">{goalsProgress}%</span>
               </div>
+              <Progress value={goalsProgress} className="h-3 bg-gray-200" />
             </div>
 
-            {/* Progress Bar - Only show for active or completed steps */}
-            {(step.isActive || step.completed) && (
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className={`h-3 rounded-full transition-all duration-300 ease-out ${
-                    step.completed ? "bg-green-500" : "bg-green-400"
-                  }`}
-                  style={{ width: `${step.progress}%` }}
-                />
+            {/* Growth Areas Progress */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-700">Growth areas</span>
+                <span className="text-sm text-gray-500">{growthProgress}%</span>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
+              <Progress value={growthProgress} className="h-3 bg-gray-200" />
+            </div>
 
-      {/* Testimonials Slider */}
-      <div className="w-full max-w-md mb-8">
-        <div className="relative overflow-hidden">
-          <div
-            className="flex transition-transform duration-1000 ease-in-out"
-            style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
-          >
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="w-full flex-shrink-0">
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  {/* Stars */}
-                  <div className="flex mb-3">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="w-5 h-5 fill-green-500 text-green-500" />
-                    ))}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{testimonial.title}</h3>
-
-                  {/* Author */}
-                  <p className="text-gray-600 text-sm mb-4">{testimonial.author}</p>
-
-                  {/* Testimonial Text */}
-                  <p className="text-gray-700 text-sm leading-relaxed">{testimonial.text}</p>
-                </div>
+            {/* Content Progress */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-700">Content</span>
+                <span className="text-sm text-gray-500">{contentProgress}%</span>
               </div>
-            ))}
+              <Progress value={contentProgress} className="h-3 bg-gray-200" />
+            </div>
           </div>
-        </div>
 
-        {/* Testimonial Indicators */}
-        <div className="flex justify-center mt-4 space-x-2">
-          {testimonials.map((_, index) => (
-            <div
-              key={index}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentTestimonial ? "bg-green-500" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
+          <div className="mt-8 text-center">
+            <div className="inline-flex items-center space-x-2 text-sm text-gray-500">
+              <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+              <span>Analyzing your wellness profile...</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Continue Button - Shows when all completed */}
-      {allCompleted && (
-        <div className="animate-in fade-in slide-in-from-bottom duration-500">
-          <Button
-            onClick={handleContinue}
-            className="bg-green-600 hover:bg-green-700 text-white px-12 py-3 rounded-full text-lg font-medium"
-          >
-            Continue
-          </Button>
-        </div>
-      )}
+      {/* Pop-up Modal */}
+      <PopupModal
+        isOpen={showPopup}
+        question={currentQuestion}
+        onAnswer={handlePopupAnswer}
+        onClose={() => setShowPopup(false)}
+      />
+
+      {/* CSS personalizado para animações */}
+      <style jsx>{`
+        @keyframes zoom-in-95 {
+          0% {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
+        .animate-in {
+          animation-fill-mode: both;
+        }
+        
+        .zoom-in-95 {
+          animation-name: zoom-in-95;
+        }
+        
+        .duration-300 {
+          animation-duration: 300ms;
+        }
+      `}</style>
     </div>
   )
 }

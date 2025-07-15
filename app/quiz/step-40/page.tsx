@@ -1,11 +1,11 @@
 "use client"
 
-import { useSearchParams, useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Check, Star, XCircle, Info, ChevronRight } from "lucide-react"
+import { Check, Star, ChevronRight, Clock } from "lucide-react"
 import Image from "next/image"
 
 // --- Ícones SVG ---
@@ -50,6 +50,30 @@ const GuaranteeSeal = () => (
 )
 
 // --- Componentes Auxiliares ---
+const CountdownTimer = () => {
+  const [timeLeft, setTimeLeft] = useState(600) // 10 minutes in seconds
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const minutes = Math.floor(timeLeft / 60)
+  const seconds = timeLeft % 60
+
+  return (
+    <div className="flex items-center justify-center space-x-2 text-red-600 font-bold">
+      <Clock className="w-5 h-5" />
+      <span className="text-lg">
+        {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+      </span>
+    </div>
+  )
+}
+
 const StatBar = ({ label, value, level, isGood = false }) => (
   <div className="mb-4">
     <div className="flex justify-between items-center mb-2">
@@ -149,7 +173,17 @@ const BeforeAfterComparison = ({ gender, age }) => {
   )
 }
 
-const PricingOption = ({ id, label, price, perDay, isPopular, selectedPlan, setSelectedPlan }) => (
+const PricingOption = ({
+  id,
+  label,
+  price,
+  originalPrice,
+  perDay,
+  isPopular,
+  selectedPlan,
+  setSelectedPlan,
+  discount,
+}) => (
   <div className="relative">
     <label
       htmlFor={id}
@@ -176,7 +210,11 @@ const PricingOption = ({ id, label, price, perDay, isPopular, selectedPlan, setS
           </div>
           <div>
             <span className="font-semibold text-gray-800">{label}</span>
-            <p className="text-sm text-gray-500">€{price}</p>
+            <div className="flex items-center space-x-2">
+              {originalPrice && <span className="text-sm text-gray-400 line-through">€{originalPrice}</span>}
+              <span className="text-sm text-teal-600 font-bold">€{price}</span>
+              {discount && <Badge className="bg-red-500 text-white text-xs px-2 py-1">{discount}% OFF</Badge>}
+            </div>
           </div>
         </div>
         <div className="text-right bg-gray-100 px-3 py-1 rounded-md">
@@ -200,57 +238,19 @@ const PricingOption = ({ id, label, price, perDay, isPopular, selectedPlan, setS
 )
 
 // --- Componente da Página Principal ---
-export default function Step39() {
+export default function Step40() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const name = searchParams.get("name") || "madson"
   const gender = searchParams.get("gender") || "male"
   const age = searchParams.get("age") || "25-34"
   const [selectedPlan, setSelectedPlan] = useState("plan-2")
 
-  // URLs de checkout para cada plano
+  // URLs de checkout para cada plano com desconto
   const checkoutUrls = {
     "plan-1": "https://pay.hotmart.com/D100838092L?off=n7vz0ceo&checkoutMode=6", // 7-DAY PLAN
     "plan-2": "https://pay.hotmart.com/D100838092L?off=oaytx2ck&checkoutMode=6", // 1-MONTH PLAN
     "plan-3": "https://pay.hotmart.com/D100838092L?off=czqrbgur&checkoutMode=6", // 3-MONTH PLAN
   }
-
-  // Exit intent redirect
-  useEffect(() => {
-    let isRedirecting = false
-
-    const handleBeforeUnload = (e) => {
-      if (!isRedirecting) {
-        e.preventDefault()
-        e.returnValue = ""
-
-        // Small delay to allow the browser to show the confirmation dialog
-        setTimeout(() => {
-          if (!isRedirecting) {
-            isRedirecting = true
-            const currentParams = new URLSearchParams(window.location.search)
-            router.push(`/quiz/step-40?${currentParams.toString()}`)
-          }
-        }, 100)
-      }
-    }
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden" && !isRedirecting) {
-        isRedirecting = true
-        const currentParams = new URLSearchParams(window.location.search)
-        router.push(`/quiz/step-40?${currentParams.toString()}`)
-      }
-    }
-
-    window.addEventListener("beforeunload", handleBeforeUnload)
-    document.addEventListener("visibilitychange", handleVisibilityChange)
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload)
-      document.removeEventListener("visibilitychange", handleVisibilityChange)
-    }
-  }, [router])
 
   // Função para redirecionar para o checkout
   const handleGetMyPlan = () => {
@@ -269,50 +269,6 @@ export default function Step39() {
     "Your self-confidence is at an all-time high",
   ]
 
-  const problems = [
-    "Feeling guilty for not being productive",
-    "Scrolling on social media in the middle of a task",
-    "Feeling uneasy when you have free time",
-    "Feeling rushed at work",
-    "Always checking phone for messages or emails",
-    "Lack of time for self care",
-    "Problems with feeling rested",
-    "Feeling tired and overwhelmed during the day",
-  ]
-
-  const solutions = [
-    "Continuous focus and concentration",
-    "Elevated energy levels",
-    "Improved sleep quality and schedule",
-    "Emotional stability",
-    "No guilt for getting relaxed",
-    "Efficient performance at work",
-    "Stable self-care routines",
-  ]
-
-  const faqs = [
-    {
-      question: "What if I don't have enough willpower to stick to the plan?",
-      answer:
-        "Our plan is designed to help you build your willpower gradually, so you don't have to rely on your own willpower too much in the beginning. We also provide support and guidance to help you stay motivated throughout the process.",
-    },
-    {
-      question: "What if I have too many distractions in my life?",
-      answer:
-        "We understand that life can be hectic, but our plan includes strategies to help you minimize distractions and stay focused on your goals. From setting clear priorities to creating a distraction-free environment, we'll help you develop habits that promote productivity and lower negative effects.",
-    },
-    {
-      question: "What if I feel overwhelmed about starting this plan?",
-      answer:
-        "Starting anything new can be scary, but our plan is designed to be manageable and easy to follow. We'll help you break down your goals into small, actionable steps, and provide support and encouragement to help you overcome any obstacles that come up along the way.",
-    },
-    {
-      question: "What if I've tried tools before and they haven't worked for me?",
-      answer:
-        "Our plan is different from other tools you may have tried because it is evidence-based. We combine proven techniques and strategies, supported by field specialists, to give you the best possible chance of success. Unlike other tools, our plan is personalized to address your specific needs and challenges.",
-    },
-  ]
-
   const testimonials = [
     {
       name: "Brian Ross",
@@ -328,12 +284,35 @@ export default function Step39() {
     },
   ]
 
-  const mediaLogos = ["The New York Times", "THE WALL STREET JOURNAL", "Forbes", "CNN Health", "Vox"]
-
+  // Planos com desconto
   const pricingPlans = [
-    { id: "plan-1", label: "7-DAY PLAN", price: "49.99", perDay: "7.14", isPopular: false },
-    { id: "plan-2", label: "1-MONTH PLAN", price: "49.99", perDay: "1.66", isPopular: true },
-    { id: "plan-3", label: "3-MONTH PLAN", price: "99.99", perDay: "1.11", isPopular: false },
+    {
+      id: "plan-1",
+      label: "7-DAY PLAN",
+      price: "29.99",
+      originalPrice: "49.99",
+      perDay: "4.28",
+      isPopular: false,
+      discount: 40,
+    },
+    {
+      id: "plan-2",
+      label: "1-MONTH PLAN",
+      price: "29.99",
+      originalPrice: "49.99",
+      perDay: "1.00",
+      isPopular: true,
+      discount: 40,
+    },
+    {
+      id: "plan-3",
+      label: "3-MONTH PLAN",
+      price: "59.99",
+      originalPrice: "99.99",
+      perDay: "0.66",
+      isPopular: false,
+      discount: 40,
+    },
   ]
 
   const renderPricing = () => (
@@ -385,6 +364,23 @@ export default function Step39() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-12">
+        {/* Discount Banner */}
+        <Card className="mb-8 p-6 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200">
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Badge className="bg-red-500 text-white px-3 py-1">SPECIAL DISCOUNT</Badge>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Discount is reserved for: <span className="text-red-600">{name}</span>
+            </h2>
+            <p className="text-gray-600 mb-4">This exclusive 40% discount expires in:</p>
+            <CountdownTimer />
+            <p className="text-sm text-gray-500 mt-2">
+              Don't miss this one-time opportunity to transform your well-being!
+            </p>
+          </div>
+        </Card>
+
         <BeforeAfterComparison gender={gender} age={age} />
 
         <div className="text-center mt-8 mb-8">
@@ -415,8 +411,8 @@ export default function Step39() {
           GET MY PLAN
         </Button>
         <p className="text-[11px] text-gray-500 text-center mt-3">
-          By clicking "Get My Plan", you agree to our automatic subscription renewal. First month is €49.99, then
-          €49.99/month(period). You can cancel via the app or email: support@theliven.com. See{" "}
+          By clicking "Get My Plan", you agree to our automatic subscription renewal. Discounted price applies to first
+          payment only. You can cancel via the app or email: support@theliven.com. See{" "}
           <a href="#" className="underline">
             Subscription Policy
           </a>{" "}
@@ -435,18 +431,6 @@ export default function Step39() {
                 <Check className="w-6 h-6 bg-teal-100 text-teal-600 rounded-full p-1 flex-shrink-0" />
                 <span>{goal}</span>
               </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="my-12 p-8 text-center">
-          <p className="text-sm font-semibold text-gray-500 mb-4">Our program is based on methodology</p>
-          <h2 className="text-3xl font-bold mb-6">As featured in</h2>
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-gray-400">
-            {mediaLogos.map((logo) => (
-              <span key={logo} className="text-xl font-bold tracking-wider">
-                {logo}
-              </span>
             ))}
           </div>
         </Card>
@@ -490,56 +474,6 @@ export default function Step39() {
             <p className="text-sm text-gray-600 mt-1">of users suffer from the same issues as you</p>
           </div>
         </div>
-
-        <div className="grid md:grid-cols-2 gap-6 my-12">
-          <Card className="p-6">
-            <h3 className="font-bold text-lg mb-4">How life might be without Liven</h3>
-            <div className="space-y-3">
-              {problems.map((item, i) => (
-                <div key={i} className="flex items-start space-x-3 text-gray-600">
-                  <XCircle className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-          <Card className="p-6 bg-teal-50/50 border-teal-200">
-            <h3 className="font-bold text-lg mb-4">What Liven can help you with</h3>
-            <div className="space-y-3">
-              {solutions.map((item, i) => (
-                <div key={i} className="flex items-start space-x-3 text-gray-800">
-                  <Check className="w-5 h-5 bg-teal-500 text-white rounded-full p-0.5 mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-
-        <Card className="my-12 p-6 bg-gray-100 border-gray-200">
-          <div className="flex items-center space-x-4">
-            <Image src="/images/award-badge.png" alt="Award Badge" width={80} height={80} />
-            <div className="text-sm">
-              <p className="font-semibold">Liven is proudly nominated for an</p>
-              <p className="font-bold text-teal-600">International Digital Well-being Innovation Award - 2023.</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="my-12 p-8">
-          <h2 className="text-2xl font-bold text-center mb-6">People often ask</h2>
-          <div className="space-y-6">
-            {faqs.map((faq) => (
-              <div key={faq.question}>
-                <h3 className="font-bold flex items-start space-x-3">
-                  <Info className="w-6 h-6 text-teal-500 flex-shrink-0" />
-                  <span>{faq.question}</span>
-                </h3>
-                <p className="text-gray-600 mt-2 pl-9">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
 
         <div className="my-12">
           <h2 className="text-2xl font-bold text-center mb-6">Users love our plans</h2>
@@ -587,8 +521,8 @@ export default function Step39() {
           GET MY PLAN
         </Button>
         <p className="text-[11px] text-gray-500 text-center mt-3">
-          By clicking "Get My Plan", you agree to our automatic subscription renewal. First month is €49.99, then
-          €49.99/month(period). You can cancel via the app or email: support@theliven.com. See{" "}
+          By clicking "Get My Plan", you agree to our automatic subscription renewal. Discounted price applies to first
+          payment only. You can cancel via the app or email: support@theliven.com. See{" "}
           <a href="#" className="underline">
             Subscription Policy
           </a>{" "}
