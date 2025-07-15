@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams, useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -176,12 +176,12 @@ const PricingOption = ({ id, label, price, perDay, isPopular, selectedPlan, setS
           </div>
           <div>
             <span className="font-semibold text-gray-800">{label}</span>
-            <p className="text-sm text-gray-500">€{price}</p>
+            <p className="text-sm text-gray-500">${price}</p>
           </div>
         </div>
         <div className="text-right bg-gray-100 px-3 py-1 rounded-md">
           <div className="font-bold text-lg text-gray-800">
-            €<span className="text-2xl">{perDay.split(".")[0]}</span>
+            $<span className="text-2xl">{perDay.split(".")[0]}</span>
             <sup className="text-lg font-bold">.{perDay.split(".")[1]}</sup>
           </div>
           <span className="text-xs text-gray-500 font-medium -mt-1 block">per day</span>
@@ -207,6 +207,7 @@ export default function Step39() {
   const gender = searchParams.get("gender") || "male"
   const age = searchParams.get("age") || "25-34"
   const [selectedPlan, setSelectedPlan] = useState("plan-2")
+  const hasRedirected = useRef(false)
 
   // URLs de checkout para cada plano
   const checkoutUrls = {
@@ -215,45 +216,66 @@ export default function Step39() {
     "plan-3": "https://pay.hotmart.com/D100838092L?off=czqrbgur&checkoutMode=6", // 3-MONTH PLAN
   }
 
-  // Exit intent redirect
+  // Exit intent redirect - versão corrigida
   useEffect(() => {
-    let isRedirecting = false
-
-    const handleBeforeUnload = (e) => {
-      if (!isRedirecting) {
-        e.preventDefault()
-        e.returnValue = ""
-
-        // Small delay to allow the browser to show the confirmation dialog
-        setTimeout(() => {
-          if (!isRedirecting) {
-            isRedirecting = true
-            const currentParams = new URLSearchParams(window.location.search)
-            router.push(`/quiz/step-40?${currentParams.toString()}`)
-          }
-        }, 100)
-      }
-    }
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden" && !isRedirecting) {
-        isRedirecting = true
+    const handleMouseLeave = (e) => {
+      // Detecta quando o mouse sai da área superior da página
+      if (e.clientY <= 0 && !hasRedirected.current) {
+        hasRedirected.current = true
         const currentParams = new URLSearchParams(window.location.search)
         router.push(`/quiz/step-40?${currentParams.toString()}`)
       }
     }
 
+    const handleBeforeUnload = (e) => {
+      if (!hasRedirected.current) {
+        // Não previne o evento, apenas marca que tentou sair
+        hasRedirected.current = true
+        // Usa setTimeout para redirecionar após o browser processar o evento
+        setTimeout(() => {
+          const currentParams = new URLSearchParams(window.location.search)
+          router.push(`/quiz/step-40?${currentParams.toString()}`)
+        }, 100)
+      }
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden" && !hasRedirected.current) {
+        hasRedirected.current = true
+        const currentParams = new URLSearchParams(window.location.search)
+        router.push(`/quiz/step-40?${currentParams.toString()}`)
+      }
+    }
+
+    const handleKeyDown = (e) => {
+      // Detecta Ctrl+W, Ctrl+T, Alt+F4, etc.
+      if ((e.ctrlKey && (e.key === "w" || e.key === "t")) || (e.altKey && e.key === "F4") || e.key === "F5") {
+        if (!hasRedirected.current) {
+          hasRedirected.current = true
+          const currentParams = new URLSearchParams(window.location.search)
+          router.push(`/quiz/step-40?${currentParams.toString()}`)
+        }
+      }
+    }
+
+    // Adiciona todos os event listeners
+    document.addEventListener("mouseleave", handleMouseLeave)
     window.addEventListener("beforeunload", handleBeforeUnload)
     document.addEventListener("visibilitychange", handleVisibilityChange)
+    document.addEventListener("keydown", handleKeyDown)
 
+    // Cleanup
     return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave)
       window.removeEventListener("beforeunload", handleBeforeUnload)
       document.removeEventListener("visibilitychange", handleVisibilityChange)
+      document.removeEventListener("keydown", handleKeyDown)
     }
   }, [router])
 
   // Função para redirecionar para o checkout
   const handleGetMyPlan = () => {
+    hasRedirected.current = true // Previne redirect quando clica no botão
     const checkoutUrl = checkoutUrls[selectedPlan]
     if (checkoutUrl) {
       window.open(checkoutUrl, "_blank")
@@ -415,8 +437,8 @@ export default function Step39() {
           GET MY PLAN
         </Button>
         <p className="text-[11px] text-gray-500 text-center mt-3">
-          By clicking "Get My Plan", you agree to our automatic subscription renewal. First month is €49.99, then
-          €49.99/month(period). You can cancel via the app or email: support@theliven.com. See{" "}
+          By clicking "Get My Plan", you agree to our automatic subscription renewal. First month is $49.99, then
+          $49.99/month(period). You can cancel via the app or email: support@theliven.com. See{" "}
           <a href="#" className="underline">
             Subscription Policy
           </a>{" "}
@@ -587,8 +609,8 @@ export default function Step39() {
           GET MY PLAN
         </Button>
         <p className="text-[11px] text-gray-500 text-center mt-3">
-          By clicking "Get My Plan", you agree to our automatic subscription renewal. First month is €49.99, then
-          €49.99/month(period). You can cancel via the app or email: support@theliven.com. See{" "}
+          By clicking "Get My Plan", you agree to our automatic subscription renewal. First month is $49.99, then
+          $49.99/month(period). You can cancel via the app or email: support@theliven.com. See{" "}
           <a href="#" className="underline">
             Subscription Policy
           </a>{" "}

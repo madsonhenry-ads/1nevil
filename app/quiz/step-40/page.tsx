@@ -211,15 +211,15 @@ const PricingOption = ({
           <div>
             <span className="font-semibold text-gray-800">{label}</span>
             <div className="flex items-center space-x-2">
-              {originalPrice && <span className="text-sm text-gray-400 line-through">€{originalPrice}</span>}
-              <span className="text-sm text-teal-600 font-bold">€{price}</span>
+              {originalPrice && <span className="text-sm text-gray-400 line-through">${originalPrice}</span>}
+              <span className="text-sm text-teal-600 font-bold">${price}</span>
               {discount && <Badge className="bg-red-500 text-white text-xs px-2 py-1">{discount}% OFF</Badge>}
             </div>
           </div>
         </div>
         <div className="text-right bg-gray-100 px-3 py-1 rounded-md">
           <div className="font-bold text-lg text-gray-800">
-            €<span className="text-2xl">{perDay.split(".")[0]}</span>
+            $<span className="text-2xl">{perDay.split(".")[0]}</span>
             <sup className="text-lg font-bold">.{perDay.split(".")[1]}</sup>
           </div>
           <span className="text-xs text-gray-500 font-medium -mt-1 block">per day</span>
@@ -247,9 +247,9 @@ export default function Step40() {
 
   // URLs de checkout para cada plano com desconto
   const checkoutUrls = {
-    "plan-1": "https://pay.hotmart.com/D100838092L?off=n7vz0ceo&checkoutMode=6", // 7-DAY PLAN
-    "plan-2": "https://pay.hotmart.com/D100838092L?off=oaytx2ck&checkoutMode=6", // 1-MONTH PLAN
-    "plan-3": "https://pay.hotmart.com/D100838092L?off=czqrbgur&checkoutMode=6", // 3-MONTH PLAN
+    "plan-1": "https://pay.hotmart.com/D100838092L?off=wm2ocbeh&checkoutMode=6", // 7-DAY PLAN
+    "plan-2": "https://pay.hotmart.com/D100838092L?off=tkhn3sa2&checkoutMode=6", // 1-MONTH PLAN
+    "plan-3": "https://pay.hotmart.com/D100838092L?off=mjpmb8c6&checkoutMode=6", // 3-MONTH PLAN
   }
 
   // Função para redirecionar para o checkout
@@ -289,29 +289,29 @@ export default function Step40() {
     {
       id: "plan-1",
       label: "7-DAY PLAN",
-      price: "29.99",
+      price: "10.50",
       originalPrice: "49.99",
-      perDay: "4.28",
+      perDay: "1.50",
       isPopular: false,
-      discount: 40,
+      discount: 79,
     },
     {
       id: "plan-2",
       label: "1-MONTH PLAN",
-      price: "29.99",
+      price: "17.20",
       originalPrice: "49.99",
-      perDay: "1.00",
+      perDay: "0.57",
       isPopular: true,
-      discount: 40,
+      discount: 66,
     },
     {
       id: "plan-3",
       label: "3-MONTH PLAN",
-      price: "59.99",
+      price: "29.99",
       originalPrice: "99.99",
-      perDay: "0.66",
+      perDay: "0.33",
       isPopular: false,
-      discount: 40,
+      discount: 70,
     },
   ]
 
