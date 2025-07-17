@@ -212,7 +212,7 @@ export default function Step39() {
   // URLs de checkout para cada plano
   const checkoutUrls = {
     "plan-1": "https://pay.hotmart.com/D100838092L?off=n7vz0ceo&checkoutMode=6", // 7-DAY PLAN
-    "plan-2": "https://pay.hotmart.com/D100838092L?off=oaytx2ck&checkoutMode=6", // 1-MONTH PLAN
+    "plan-2": "https://pay.hotmart.com/D100838092L?off=43i6aae4&checkoutMode=6", // 1-MONTH PLAN
     "plan-3": "https://pay.hotmart.com/D100838092L?off=czqrbgur&checkoutMode=6", // 3-MONTH PLAN
   }
 
