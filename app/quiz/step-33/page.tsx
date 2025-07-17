@@ -328,7 +328,7 @@ function Step33Content() {
         <div className="flex items-center gap-2"></div>
         <span className="text-gray-600 text-sm font-medium">26/26</span>
       </header>
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-20">
+      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-4">
         <div className="text-center space-y-6 mb-12">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Summary of your Well-being Profile</h1>
         </div>

@@ -25,20 +25,25 @@ export default function HomePage() {
           <p className="text-gray-700 font-medium">3-MINUTE QUIZ</p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 items-center mb-8">
+        {/* --- INÍCIO DA ALTERAÇÃO --- */}
+
+        {/* 1. Usamos justify-center e gap para um espaçamento mais seguro e responsivo */}
+        <div className="w-full flex flex-row justify-center items-center gap-4 sm:gap-8 mb-8">
+          
           <div className="flex flex-col items-center">
-            <div className="w-48 h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative">
+            {/* 2. Reduzimos o tamanho dos cards em telas pequenas (w-36 h-48) e aumentamos em telas maiores (sm:w-48 sm:h-64) */}
+            <div className="w-36 h-48 sm:w-48 sm:h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative">
               <Image
                 src="/images/male.avif"
                 alt="Male character"
-                width={192}
-                height={256}
-                className="w-full h-full object-cover"
+                fill // Usar 'fill' é melhor para preencher o contêiner responsivo
+                className="object-cover"
               />
             </div>
+            {/* 3. O botão também segue o tamanho responsivo do card */}
             <Link
               href="/quiz/step-2?gender=male"
-              className="w-48 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-between transition-colors"
+              className="w-36 sm:w-48 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-between transition-colors"
             >
               <span>Male</span>
               <ChevronRight className="w-5 h-5" />
@@ -46,24 +51,25 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="w-48 h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative">
+            <div className="w-36 h-48 sm:w-48 sm:h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative">
               <Image
                 src="/images/female.avif"
                 alt="Female character"
-                width={192}
-                height={256}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
             <Link
               href="/quiz/step-2?gender=female"
-              className="w-48 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-between transition-colors"
+              className="w-36 sm:w-48 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-between transition-colors"
             >
               <span>Female</span>
               <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
         </div>
+
+        {/* --- FIM DA ALTERAÇÃO --- */}
 
         <div className="text-center text-xs text-gray-500 max-w-lg">
           <p>

@@ -48,7 +48,7 @@ function Step5Content() {
         </div>
         <span className="text-gray-600 text-sm font-medium">2/26</span>
       </header>
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-20">
+      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-4">
         {" "}
         {/* Adicionar margem superior para o cabeçalho fixo */}
         <div className="text-center space-y-4 mb-12">

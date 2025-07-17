@@ -72,7 +72,7 @@ function Step24Content() {
         <div className="flex items-center gap-2">{/* Ícone central pode ser adicionado aqui se necessário */}</div>
         <span className="text-gray-600 text-sm font-medium">21/26</span>
       </header>
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-20">
+      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-4">
         <div className="text-center space-y-2 mb-12">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
             Have any of the following caused you to
