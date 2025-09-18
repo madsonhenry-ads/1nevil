@@ -41,7 +41,7 @@ function Step30Content() {
         <div className="w-10"></div> {/* Spacer */}
       </header>
 
-      <main className="flex flex-col items-center justify-center px-6 py-8 max-w-2xl mx-auto">
+      <main className="flex flex-col items-center justify-center px-3 pt-1 pb-2 max-w-2xl mx-auto mt-4">
         <div className="relative w-48 h-48 mx-auto mb-8">
           
           {/* Brilho de sol (camada de trás) */}

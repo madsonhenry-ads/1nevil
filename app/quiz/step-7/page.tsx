@@ -58,7 +58,7 @@ function Step7Content() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 pt-4 pb-12 w-full">
+      <main className="flex flex-col items-center justify-center px-3 pt-1 pb-2 max-w-2xl mx-auto mt-4">
         <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center min-h-0 flex-1">
           <div className="text-center space-y-3 sm:space-y-4 mb-8 sm:mb-12">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 leading-tight px-2">

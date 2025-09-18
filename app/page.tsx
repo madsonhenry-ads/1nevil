@@ -5,91 +5,103 @@ import Image from "next/image"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#f5f3f0]">
+    // 1. Usamos flexbox na div principal para controlar o layout geral
+    <div className="min-h-screen bg-[#f5f3f0] flex flex-col">
       <Header />
 
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-4xl mx-auto">
-        <div className="text-center space-y-6 mb-12">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight">
-            A PERSONALIZED WELL-BEING
-            <br />
-            MANAGEMENT PLAN
-          </h1>
+      {/* 2. O 'main' agora cresce para ocupar o espaço disponível, empurrando o rodapé para baixo */}
+      <main className="flex flex-col items-center justify-center flex-grow px-4 py-6">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
 
-          <p className="text-gray-600 text-lg max-w-md mx-auto">
-            IMPROVE YOUR WELL-BEING WITH OUR PERSONALIZED
-            <br />
-            PLAN
-          </p>
+          {/* Reduzimos as margens e o espaçamento em telas pequenas */}
+          <div className="text-center space-y-3 mb-8">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 leading-tight">
+              A PERSONALIZED WELL-BEING
+              <br />
+              MANAGEMENT PLAN
+            </h1>
+            <p className="text-sm sm:text-lg text-gray-600 max-w-md mx-auto">
+              IMPROVE YOUR WELL-BEING WITH OUR PERSONALIZED PLAN
+            </p>
+            <p className="text-gray-700 font-medium text-sm sm:text-base">
+              3-MINUTE QUIZ
+            </p>
+          </div>
 
-          <p className="text-gray-700 font-medium">3-MINUTE QUIZ</p>
-        </div>
+          {/* --- INÍCIO DA ALTERAÇÃO PRINCIPAL --- */}
 
-        {/* --- INÍCIO DA ALTERAÇÃO --- */}
-
-        {/* 1. Usamos justify-center e gap para um espaçamento mais seguro e responsivo */}
-        <div className="w-full flex flex-row justify-center items-center gap-4 sm:gap-8 mb-8">
-          
-          <div className="flex flex-col items-center">
-            {/* 2. Reduzimos o tamanho dos cards em telas pequenas (w-36 h-48) e aumentamos em telas maiores (sm:w-48 sm:h-64) */}
-            <div className="w-36 h-48 sm:w-48 sm:h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative">
-              <Image
-                src="/images/male.avif"
-                alt="Male character"
-                fill // Usar 'fill' é melhor para preencher o contêiner responsivo
-                className="object-cover"
-              />
-            </div>
-            {/* 3. O botão também segue o tamanho responsivo do card */}
+          <div className="w-full flex flex-row justify-center items-center gap-4 sm:gap-8 mb-6">
+            
+            {/* CARD MASCULINO - AGORA TODO ENVOLVIDO PELO LINK */}
             <Link
               href="/quiz/step-2?gender=male"
-              className="w-36 sm:w-48 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-between transition-colors"
+              className="flex flex-col items-center group" // Adicionado 'group' para hover effects, se desejar
             >
-              <span>Male</span>
-              <ChevronRight className="w-5 h-5" />
+              {/* 3. Reduzimos o tamanho dos cards em telas de celular (w-32 h-44) */}
+              <div className="w-32 h-44 sm:w-48 sm:h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-3 relative transition-transform group-hover:scale-105">
+                <Image
+                  src="/images/male.avif"
+                  alt="Male character"
+                  fill
+                  sizes="(max-width: 640px) 128px, 192px" // Otimiza o carregamento da imagem
+                  className="object-cover"
+                />
+              </div>
+              <div
+                className="w-32 sm:w-48 bg-green-600 group-hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-between transition-colors text-sm sm:text-base"
+              >
+                <span>Male</span>
+                <ChevronRight className="w-5 h-5" />
+              </div>
             </Link>
-          </div>
 
-          <div className="flex flex-col items-center">
-            <div className="w-36 h-48 sm:w-48 sm:h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-4 relative">
-              <Image
-                src="/images/female.avif"
-                alt="Female character"
-                fill
-                className="object-cover"
-              />
-            </div>
+            {/* CARD FEMININO - AGORA TODO ENVOLVIDO PELO LINK */}
             <Link
               href="/quiz/step-2?gender=female"
-              className="w-36 sm:w-48 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-between transition-colors"
+              className="flex flex-col items-center group"
             >
-              <span>Female</span>
-              <ChevronRight className="w-5 h-5" />
+              <div className="w-32 h-44 sm:w-48 sm:h-64 bg-white rounded-2xl shadow-lg overflow-hidden mb-3 relative transition-transform group-hover:scale-105">
+                <Image
+                  src="/images/female.avif"
+                  alt="Female character"
+                  fill
+                  sizes="(max-width: 640px) 128px, 192px"
+                  className="object-cover"
+                />
+              </div>
+              <div
+                className="w-32 sm:w-48 bg-green-600 group-hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-between transition-colors text-sm sm:text-base"
+              >
+                <span>Female</span>
+                <ChevronRight className="w-5 h-5" />
+              </div>
             </Link>
+
           </div>
-        </div>
 
-        {/* --- FIM DA ALTERAÇÃO --- */}
+          {/* --- FIM DA ALTERAÇÃO PRINCIPAL --- */}
 
-        <div className="text-center text-xs text-gray-500 max-w-lg">
-          <p>
-            By clicking "Male" or "Female" you agree with the{" "}
-            <Link href="/terms" className="text-blue-600 underline">
-              Terms of Use and Service
-            </Link>
-            ,{" "}
-            <Link href="/privacy" className="text-blue-600 underline">
-              Privacy Policy
-            </Link>
-            ,{" "}
-            <Link href="/subscription" className="text-blue-600 underline">
-              Subscription Policy
-            </Link>{" "}
-            and{" "}
-            <Link href="/cookie" className="text-blue-600 underline">
-              Cookie Policy
-            </Link>
-          </p>
+          <div className="text-center text-xs text-gray-500 max-w-lg">
+            <p>
+              By clicking "Male" or "Female" you agree with the{" "}
+              <Link href="/terms" className="text-blue-600 underline">
+                Terms of Use and Service
+              </Link>
+              ,{" "}
+              <Link href="/privacy" className="text-blue-600 underline">
+                Privacy Policy
+              </Link>
+              ,{" "}
+              <Link href="/subscription" className="text-blue-600 underline">
+                Subscription Policy
+              </Link>{" "}
+              and{" "}
+              <Link href="/cookie" className="text-blue-600 underline">
+                Cookie Policy
+              </Link>
+            </p>
+          </div>
+
         </div>
       </main>
     </div>

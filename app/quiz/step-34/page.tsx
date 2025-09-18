@@ -56,7 +56,7 @@ export default function Step34() {
     <div className="min-h-screen bg-[#f5f3f0]">
       <Header />
 
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-4xl mx-auto">
+      <main className="flex flex-col items-center justify-center px-3 pt-1 pb-2 max-w-2xl mx-auto mt-4">
         
 
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-4 max-w-md">

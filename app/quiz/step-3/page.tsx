@@ -38,7 +38,7 @@ function Step3Content() {
         <div className="w-10"></div> {/* Espaçador para centralizar */}
       </header>
 
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-4xl mx-auto min-h-[calc(100vh-120px)]">
+      <main className="flex flex-col items-center justify-center px-3 pt-1 pb-2 max-w-2xl mx-auto mt-4">
         <div className="text-center space-y-2 mb-16">
           <h1 className="text-2xl md:text-3xl font-bold text-teal-600">Over 1,000,000 people</h1>
           <p className="text-gray-800 text-lg">have chosen Liven</p>

@@ -27,7 +27,7 @@ function Step31Content() {
         <div className="flex items-center gap-2">{/* Ícone central pode ser adicionado aqui se necessário */}</div>
         <span className="text-gray-600 text-sm font-medium">26/26</span>
       </header>
-      <main className="flex flex-col items-center justify-center px-6 py-12 max-w-2xl mx-auto mt-4">
+      <main className="flex flex-col items-center justify-center px-3 pt-1 pb-2 max-w-2xl mx-auto mt-4">
         <div className="text-center space-y-6 mb-12">
           {/* Imagem do mapa mundi com pinos de pessoas */}
           {/* A DIV ABAIXO FOI ALTERADA PARA AUMENTAR A IMAGEM */}
