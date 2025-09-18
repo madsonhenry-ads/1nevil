@@ -16,32 +16,6 @@ const LivenLogoIcon = () => (
   </svg>
 )
 
-const BrainIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M12 2C9.23858 2 7 4.23858 7 7V9.5C7 10.8807 5.88071 12 4.5 12C3.11929 12 2 13.1193 2 14.5C2 15.8807 3.11929 17 4.5 17H5.25C6.0113 18.2933 7.08985 19.3718 8.38317 20.1331L8.5 22H10.5L10.6168 20.1331C11.3121 20.4432 12 20.6559 12 22H14C14 20.6559 14.6879 20.4432 15.3832 20.1331L15.5 22H17.5L17.6168 20.1331C18.9101 19.3718 19.9887 18.2933 20.75 17H21.5C22.8807 17 24 15.8807 24 14.5C24 13.1193 22.8807 12 21.5 12C20.1193 12 19 10.8807 19 9.5V7C19 4.23858 16.7614 2 14 2H12Z"
-      fill="#2DD4BF"
-    />
-  </svg>
-)
-
-const TargetIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-      fill="#2DD4BF"
-    />
-    <path
-      d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z"
-      fill="white"
-    />
-    <path
-      d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"
-      fill="#2DD4BF"
-    />
-  </svg>
-)
-
 const GuaranteeSeal = () => (
   <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M32 64C32 64 64 54 64 32V10L32 0L0 10V32C0 54 32 64 32 64Z" fill="#2DD4BF" />
@@ -49,10 +23,11 @@ const GuaranteeSeal = () => (
   </svg>
 )
 
+
 // --- Componentes Auxiliares ---
 const StatBar = ({ label, value, level, isGood = false }) => (
   <div className="mb-4">
-    <div className="flex justify-between items-center mb-2">
+    <div className="flex justify-between items-center mb-1 sm:mb-2 text-xs sm:text-sm">
       <span className="font-semibold text-gray-700">{label}</span>
       <span className="font-medium text-gray-500">{level}</span>
     </div>
@@ -66,23 +41,14 @@ const StatBar = ({ label, value, level, isGood = false }) => (
 )
 
 const BeforeAfterComparison = ({ gender, age }) => {
-  // Função para obter a imagem baseada no gênero, idade e estado
   const getProfileImage = (gender, age, state) => {
     let ageRangeSuffix = ""
-
-    if (age === "18-24") {
-      ageRangeSuffix = "18-24"
-    } else if (age === "25-34") {
-      ageRangeSuffix = "25-34"
-    } else if (age === "35-44" || age === "45-54") {
-      ageRangeSuffix = "35-54"
-    } else if (age === "55-64") {
-      ageRangeSuffix = "55-65"
-    } else if (age === "65") {
-      ageRangeSuffix = "65"
-    } else {
-      ageRangeSuffix = "25-34" // fallback
-    }
+    if (age === "18-24") ageRangeSuffix = "18-24"
+    else if (age === "25-34") ageRangeSuffix = "25-34"
+    else if (age === "35-44" || age === "45-54") ageRangeSuffix = "35-54"
+    else if (age === "55-64") ageRangeSuffix = "55-65"
+    else if (age === "65") ageRangeSuffix = "65"
+    else ageRangeSuffix = "25-34" // fallback
 
     const suffix = state === "bad" ? "bad" : "good"
     return `/images/${gender}-${ageRangeSuffix}-${suffix}.avif`
@@ -93,52 +59,49 @@ const BeforeAfterComparison = ({ gender, age }) => {
 
   return (
     <div className="relative max-w-4xl mx-auto mb-12">
-      <div className="grid md:grid-cols-2 gap-8 relative">
-        {/* Now Card */}
-        <Card className="p-6 bg-white shadow-lg">
-          <div className="text-center mb-20">
-            <Badge variant="outline" className="mb-4 bg-gray-100 text-gray-600 border-gray-300">
+      <div className="grid grid-cols-2 gap-3 sm:gap-8 relative">
+        <Card className="p-3 sm:p-4 md:p-6 bg-white shadow-lg flex flex-col">
+          <div className="text-center mb-4 sm:mb-8 md:mb-12 flex-grow">
+            <Badge variant="outline" className="mb-2 sm:mb-4 bg-gray-100 text-gray-600 border-gray-300 text-xs sm:text-sm">
               Now
             </Badge>
-            <div className="relative w-48 h-48 mx-auto mb-4">
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 mx-auto">
               <Image
                 src={badImage || "/placeholder.svg"}
                 alt="Person before Liven"
-                width={192}
-                height={192}
-                className="rounded-lg object-cover"
+                fill
+                sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 192px"
+                className="rounded-lg object-contain"
               />
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <StatBar label="Energy level" value={25} level="Low" isGood={false} />
             <StatBar label="Well-being level" value={30} level="Weak" isGood={false} />
             <StatBar label="Self-esteem level" value={20} level="Low" isGood={false} />
           </div>
         </Card>
 
-        {/* Arrow */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden md:block">
           <div className="bg-white rounded-full p-3 shadow-lg border-2 border-gray-200">
             <ChevronRight className="w-6 h-6 text-teal-500" />
           </div>
         </div>
 
-        {/* Your Goal Card */}
-        <Card className="p-6 bg-white shadow-lg border-2 border-teal-200">
-          <div className="text-center mb-20">
-            <Badge className="mb-4 bg-teal-500 text-white">Your Goal</Badge>
-            <div className="relative w-48 h-48 mx-auto mb-4">
+        <Card className="p-3 sm:p-4 md:p-6 bg-white shadow-lg border-2 border-teal-200 flex flex-col">
+          <div className="text-center mb-4 sm:mb-8 md:mb-12 flex-grow">
+            <Badge className="mb-2 sm:mb-4 bg-teal-500 text-white text-xs sm:text-sm">Your Goal</Badge>
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 mx-auto">
               <Image
                 src={goodImage || "/placeholder.svg"}
                 alt="Person after Liven"
-                width={192}
-                height={192}
-                className="rounded-lg object-cover"
+                fill
+                sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 192px"
+                className="rounded-lg object-contain"
               />
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <StatBar label="Energy level" value={90} level="High" isGood={true} />
             <StatBar label="Well-being level" value={95} level="Strong" isGood={true} />
             <StatBar label="Self-esteem level" value={85} level="High" isGood={true} />
@@ -209,36 +172,29 @@ export default function Step39() {
   const [selectedPlan, setSelectedPlan] = useState("plan-2")
   const hasRedirected = useRef(false)
 
-  // URLs de checkout para cada plano
   const checkoutUrls = {
-    "plan-1": "https://pay.hotmart.com/D100838092L?off=n7vz0ceo&checkoutMode=6", // 7-DAY PLAN
-    "plan-2": "https://pay.hotmart.com/D100838092L?off=43i6aae4&checkoutMode=6", // 1-MONTH PLAN
-    "plan-3": "https://pay.hotmart.com/D100838092L?off=czqrbgur&checkoutMode=6", // 3-MONTH PLAN
+    "plan-1": "https://pay.hotmart.com/D100838092L?off=n7vz0ceo&checkoutMode=6",
+    "plan-2": "https://pay.hotmart.com/D100838092L?off=43i6aae4&checkoutMode=6",
+    "plan-3": "https://pay.hotmart.com/D100838092L?off=czqrbgur&checkoutMode=6",
   }
 
-  // Exit intent redirect - versão corrigida
   useEffect(() => {
     const handleMouseLeave = (e) => {
-      // Detecta quando o mouse sai da área superior da página
       if (e.clientY <= 0 && !hasRedirected.current) {
         hasRedirected.current = true
         const currentParams = new URLSearchParams(window.location.search)
         router.push(`/quiz/step-40?${currentParams.toString()}`)
       }
     }
-
     const handleBeforeUnload = (e) => {
       if (!hasRedirected.current) {
-        // Não previne o evento, apenas marca que tentou sair
         hasRedirected.current = true
-        // Usa setTimeout para redirecionar após o browser processar o evento
         setTimeout(() => {
           const currentParams = new URLSearchParams(window.location.search)
           router.push(`/quiz/step-40?${currentParams.toString()}`)
         }, 100)
       }
     }
-
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden" && !hasRedirected.current) {
         hasRedirected.current = true
@@ -246,9 +202,7 @@ export default function Step39() {
         router.push(`/quiz/step-40?${currentParams.toString()}`)
       }
     }
-
     const handleKeyDown = (e) => {
-      // Detecta Ctrl+W, Ctrl+T, Alt+F4, etc.
       if ((e.ctrlKey && (e.key === "w" || e.key === "t")) || (e.altKey && e.key === "F4") || e.key === "F5") {
         if (!hasRedirected.current) {
           hasRedirected.current = true
@@ -257,14 +211,10 @@ export default function Step39() {
         }
       }
     }
-
-    // Adiciona todos os event listeners
     document.addEventListener("mouseleave", handleMouseLeave)
     window.addEventListener("beforeunload", handleBeforeUnload)
     document.addEventListener("visibilitychange", handleVisibilityChange)
     document.addEventListener("keydown", handleKeyDown)
-
-    // Cleanup
     return () => {
       document.removeEventListener("mouseleave", handleMouseLeave)
       window.removeEventListener("beforeunload", handleBeforeUnload)
@@ -273,9 +223,8 @@ export default function Step39() {
     }
   }, [router])
 
-  // Função para redirecionar para o checkout
   const handleGetMyPlan = () => {
-    hasRedirected.current = true // Previne redirect quando clica no botão
+    hasRedirected.current = true
     const checkoutUrl = checkoutUrls[selectedPlan]
     if (checkoutUrl) {
       window.open(checkoutUrl, "_blank")
@@ -290,7 +239,6 @@ export default function Step39() {
     "Boost your energy levels and achieve your goals",
     "Your self-confidence is at an all-time high",
   ]
-
   const problems = [
     "Feeling guilty for not being productive",
     "Scrolling on social media in the middle of a task",
@@ -301,7 +249,6 @@ export default function Step39() {
     "Problems with feeling rested",
     "Feeling tired and overwhelmed during the day",
   ]
-
   const solutions = [
     "Continuous focus and concentration",
     "Elevated energy levels",
@@ -311,7 +258,6 @@ export default function Step39() {
     "Efficient performance at work",
     "Stable self-care routines",
   ]
-
   const faqs = [
     {
       question: "What if I don't have enough willpower to stick to the plan?",
@@ -334,7 +280,6 @@ export default function Step39() {
         "Our plan is different from other tools you may have tried because it is evidence-based. We combine proven techniques and strategies, supported by field specialists, to give you the best possible chance of success. Unlike other tools, our plan is personalized to address your specific needs and challenges.",
     },
   ]
-
   const testimonials = [
     {
       name: "Brian Ross",
@@ -349,15 +294,12 @@ export default function Step39() {
       text: "Eye-opening information... I am new to this app. I'm not new to my own issues. At my age and now being 62, with years of having needed help. Such little money for eye-opening information in regard to my inner self and drive.",
     },
   ]
-
   const mediaLogos = ["The New York Times", "THE WALL STREET JOURNAL", "Forbes", "CNN Health", "Vox"]
-
   const pricingPlans = [
     { id: "plan-1", label: "7-DAY PLAN", price: "49.99", perDay: "7.14", isPopular: false },
     { id: "plan-2", label: "1-MONTH PLAN", price: "49.99", perDay: "1.66", isPopular: true },
     { id: "plan-3", label: "3-MONTH PLAN", price: "99.99", perDay: "1.11", isPopular: false },
   ]
-
   const renderPricing = () => (
     <div className="space-y-4">
       {pricingPlans.map((plan) => (
@@ -368,7 +310,6 @@ export default function Step39() {
 
   return (
     <div className="bg-[#F9F9F7] font-sans text-gray-800">
-      {/* CSS personalizado para o efeito pulsante */}
       <style jsx>{`
         @keyframes pulse-glow {
           0%, 100% {
@@ -380,11 +321,9 @@ export default function Step39() {
             box-shadow: 0 0 0 10px rgba(45, 212, 191, 0);
           }
         }
-        
         .pulse-button {
           animation: pulse-glow 2s infinite;
         }
-        
         .pulse-button:hover {
           animation-play-state: paused;
           transform: scale(1.05);
@@ -411,19 +350,21 @@ export default function Step39() {
 
         <div className="text-center mt-8 mb-8">
           <h1 className="text-3xl font-bold mb-3">{name}, your personalized plan is ready!</h1>
-          <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
+          <div className="flex items-center justify-center space-x-4 text-sm">
             <div className="flex items-center space-x-2">
-              <BrainIcon />
-              <span>
-                Main difficulty: <span className="font-semibold">Low energy</span>
-              </span>
+              <Image src="/images/brain.png" alt="Brain icon" width={24} height={24} />
+              <div className="text-left">
+                <p className="text-gray-500 leading-tight">Main difficulty:</p>
+                <p className="font-semibold text-gray-800 leading-tight">Low energy</p>
+              </div>
             </div>
-            <div className="h-5 w-px bg-gray-300"></div>
+            <div className="h-8 w-px bg-gray-300"></div>
             <div className="flex items-center space-x-2">
-              <TargetIcon />
-              <span>
-                Goal: <span className="font-semibold">State of calm</span>
-              </span>
+              <Image src="/images/target.png" alt="Target icon" width={24} height={24} />
+              <div className="text-left">
+                <p className="text-gray-500 leading-tight">Goal:</p>
+                <p className="font-semibold text-gray-800 leading-tight">State of calm</p>
+              </div>
             </div>
           </div>
         </div>
@@ -444,10 +385,16 @@ export default function Step39() {
           </a>{" "}
           for details.
         </p>
-        <div className="flex justify-center items-center space-x-2 mt-4 py-2 border-y border-gray-200">
-          <span className="text-xs font-semibold text-gray-500">Pay Safe & Secure</span>
+
+        {/* --- INÍCIO DA ALTERAÇÃO --- */}
+        <div className="flex flex-col items-center justify-center space-y-3 mt-4 py-4 border-y border-gray-200">
+          <div className="flex items-center space-x-2 bg-teal-100/60 text-teal-700 font-semibold text-sm rounded-full px-4 py-1.5">
+            <Check className="w-4 h-4 text-teal-600" />
+            <span>Pay Safe & Secure</span>
+          </div>
           <Image src="/images/payment-methods.png" alt="Payment methods" width={280} height={40} />
         </div>
+        {/* --- FIM DA ALTERAÇÃO --- */}
 
         <Card className="my-12 p-8">
           <h2 className="text-2xl font-bold text-center mb-6">Our goals</h2>
@@ -457,18 +404,6 @@ export default function Step39() {
                 <Check className="w-6 h-6 bg-teal-100 text-teal-600 rounded-full p-1 flex-shrink-0" />
                 <span>{goal}</span>
               </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="my-12 p-8 text-center">
-          <p className="text-sm font-semibold text-gray-500 mb-4">Our program is based on methodology</p>
-          <h2 className="text-3xl font-bold mb-6">As featured in</h2>
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-gray-400">
-            {mediaLogos.map((logo) => (
-              <span key={logo} className="text-xl font-bold tracking-wider">
-                {logo}
-              </span>
             ))}
           </div>
         </Card>
@@ -583,19 +518,21 @@ export default function Step39() {
 
         <div className="text-center mt-16 mb-8">
           <h1 className="text-3xl font-bold mb-3">{name}, your personalized plan is ready!</h1>
-          <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
+          <div className="flex items-center justify-center space-x-4 text-sm">
             <div className="flex items-center space-x-2">
-              <BrainIcon />
-              <span>
-                Main difficulty: <span className="font-semibold">Low energy</span>
-              </span>
+              <Image src="/images/brain.png" alt="Brain icon" width={24} height={24} />
+              <div className="text-left">
+                <p className="text-gray-500 leading-tight">Main difficulty:</p>
+                <p className="font-semibold text-gray-800 leading-tight">Low energy</p>
+              </div>
             </div>
-            <div className="h-5 w-px bg-gray-300"></div>
+            <div className="h-8 w-px bg-gray-300"></div>
             <div className="flex items-center space-x-2">
-              <TargetIcon />
-              <span>
-                Goal: <span className="font-semibold">State of calm</span>
-              </span>
+              <Image src="/images/target.png" alt="Target icon" width={24} height={24} />
+              <div className="text-left">
+                <p className="text-gray-500 leading-tight">Goal:</p>
+                <p className="font-semibold text-gray-800 leading-tight">State of calm</p>
+              </div>
             </div>
           </div>
         </div>
@@ -616,8 +553,13 @@ export default function Step39() {
           </a>{" "}
           for details.
         </p>
-        <div className="flex justify-center items-center space-x-2 mt-4 py-2 border-y border-gray-200">
-          <span className="text-xs font-semibold text-gray-500">Pay Safe & Secure</span>
+        
+        {/* Bloco de pagamento que foi corrigido anteriormente */}
+        <div className="flex flex-col items-center justify-center space-y-3 mt-4 py-4 border-y border-gray-200">
+          <div className="flex items-center space-x-2 bg-teal-100/60 text-teal-700 font-semibold text-sm rounded-full px-4 py-1.5">
+            <Check className="w-4 h-4 text-teal-600" />
+            <span>Pay Safe & Secure</span>
+          </div>
           <Image src="/images/payment-methods.png" alt="Payment methods" width={280} height={40} />
         </div>
 
