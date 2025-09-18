@@ -1,54 +1,43 @@
 "use server"
 
-interface QuizData {
-  email: string
-  gender?: string | null
-  age?: string | null
-  [key: string]: string | null | undefined
-}
+// This function runs only on the server
 
-export async function submitEmail(quizData: QuizData) {
+export async function submitEmail(quizData: { email: string; [key: string]: any }) {
+  // 1. Prepare the data payload for the webhook
+  // It includes all the data from the quiz, plus the specific event and tag fields
+  const webhookPayload = {
+    ...quizData,
+    evento: "Usuario Criado", // Your specified event in Portuguese
+    tag: "liven - usuario criado", // CORRECT TAG: Your specified tag in Portuguese
+  }
+
+  // 2. Define the webhook URL
+  const webhookUrl = "https://get.flwg.cc/webhook/9db597ded52c3e7eed10955cf7c81804b6557ed265d882d589fbe6eb3337169b";
+
   try {
-    const webhookUrl =
-      "https://get.emailserverside.com/webhook/191bb202fa7b1939ac3c29b22782f9cf0b9d9dd1aa722397d8ee149ef6cbc737"
-
-    // Prepare the payload for the webhook
-    const payload = {
-      email: quizData.email,
-      tag: "liven - usuario criado",
-      type: "usuario-criado",
-      data: {
-        gender: quizData.gender,
-        age: quizData.age,
-        timestamp: new Date().toISOString(),
-        // Include all quiz responses
-        quizResponses: Object.fromEntries(
-          Object.entries(quizData).filter(([key]) => key !== "email" && key !== "gender" && key !== "age"),
-        ),
-      },
-    }
-
-    console.log("Sending to webhook:", payload)
-
+    // 3. Send the data to the webhook using a POST request
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
-    })
+      body: JSON.stringify(webhookPayload),
+    });
 
+    // 4. Check if the request was successful
     if (!response.ok) {
-      console.error("Webhook error:", response.status, response.statusText)
-      return { success: false, error: "Failed to submit email" }
+      // If the webhook server responds with an error, log it and return a failure message
+      const errorBody = await response.text();
+      console.error("Webhook failed with status:", response.status, errorBody);
+      return { success: false, message: "Could not save your data. Please try again." };
     }
 
-    const result = await response.json()
-    console.log("Webhook response:", result)
+    // 5. If everything went well, return a success status
+    return { success: true };
 
-    return { success: true, data: result }
   } catch (error) {
-    console.error("Error submitting email:", error)
-    return { success: false, error: "Failed to submit email" }
+    // 6. Handle network errors or other unexpected issues with the fetch call
+    console.error("Error submitting data to webhook:", error);
+    return { success: false, message: "An unexpected error occurred." };
   }
 }
