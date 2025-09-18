@@ -5,7 +5,7 @@ export async function submitName(quizData: { [key: string]: string | null }) {
     console.log("Submitting name data:", quizData)
 
     const webhookUrl =
-      "https://get.emailserverside.com/webhook/191bb202fa7b1939ac3c29b22782f9cf0b9d9dd1aa722397d8ee149ef6cbc737"
+      "https://get.flwg.cc/webhook/9db597ded52c3e7eed10955cf7c81804b6557ed265d882d589fbe6eb3337169b"
 
     const payload = {
       tag: "liven - usuario criado",
