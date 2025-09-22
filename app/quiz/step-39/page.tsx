@@ -296,9 +296,9 @@ export default function Step39() {
   ]
   const mediaLogos = ["The New York Times", "THE WALL STREET JOURNAL", "Forbes", "CNN Health", "Vox"]
   const pricingPlans = [
-    { id: "plan-1", label: "7-DAY PLAN", price: "49.99", perDay: "7.14", isPopular: false },
-    { id: "plan-2", label: "1-MONTH PLAN", price: "49.99", perDay: "1.66", isPopular: true },
-    { id: "plan-3", label: "3-MONTH PLAN", price: "99.99", perDay: "1.11", isPopular: false },
+    { id: "plan-1", label: "7-DAY PLAN", price: "14.00", perDay: "2.00", isPopular: false },
+    { id: "plan-2", label: "1-MONTH PLAN", price: "46.00", perDay: "1.53", isPopular: true },
+    { id: "plan-3", label: "3-MONTH PLAN", price: "94.00", perDay: "1.04", isPopular: false },
   ]
   const renderPricing = () => (
     <div className="space-y-4">
